@@ -20,7 +20,7 @@ class RefDataSelector extends React.Component {
   }
 
   componentDidMount() {
-    let urlPrefix = '/clientportal/rs/resources/ref/'
+    let urlPrefix = '/api/refdata/'
     fetch(urlPrefix + this.props.type, { credentials: 'same-origin' }).then(
       response => {
         if (response.status === 200) {

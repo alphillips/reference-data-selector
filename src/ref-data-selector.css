@@ -1,3 +1,23 @@
 .hideError > input {
   border: none !important;
 }
+
+.Select-placeholder, .Select--single > .Select-control .Select-value {
+
+  border: 2px solid #777777;
+  font-size: 16px;
+
+  &::focus {
+    outline: 1px solid #313131;
+    outline-offset: 1px;
+    background-color: #effafc;
+  }
+}
+
+.is-focused:not(.is-open) > .Select-control {
+  border-color: #777777;
+}
+
+.Select-menu-outer {
+  z-index: 999 !important;
+}
