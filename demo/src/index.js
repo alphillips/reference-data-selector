@@ -7,7 +7,7 @@ let Demo = React.createClass({
   render() {
     return <div>
       <h1>reference-data-selector Demo</h1>
-      <Component/>
+      <Component type="country"/>
     </div>
   }
 })

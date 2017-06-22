@@ -15,12 +15,12 @@ class RefDataSelector extends React.Component {
 
     this.linkStyle = {
       maxWidth: props.maxWidth || "100%"
-    };
-
+    }
+    this.host = process.env.API_HOST || ''
   }
 
   componentDidMount() {
-    let urlPrefix = '/api/refdata/'
+    let urlPrefix = this.host + '/api/refdata/'
     fetch(urlPrefix + this.props.type, { credentials: 'same-origin' }).then(
       response => {
         if (response.status === 200) {
