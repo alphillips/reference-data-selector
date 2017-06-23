@@ -20,6 +20,17 @@ class RefDataSelector extends React.Component {
   }
 
   componentDidMount() {
+
+    if(!this.props.noCache){
+      if(window.refDataSelectorCache &&
+         window.refDataSelectorCache[this.props.type]){
+          this.setState({
+            options: window.refDataSelectorCache[this.props.type]
+          })
+          return
+      }
+    }
+
     let urlPrefix = this.host + '/api/refdata/'
     fetch(urlPrefix + this.props.type, { credentials: 'same-origin' }).then(
       response => {
@@ -28,6 +39,12 @@ class RefDataSelector extends React.Component {
             this.setState({
               options: JSON.parse(data)
             })
+            if(!this.props.noCache){
+              if(!window.refDataSelectorCache){
+                window.refDataSelectorCache = []
+              }
+              window.refDataSelectorCache[this.props.type] = JSON.parse(data)
+            }
           });
         }
       }

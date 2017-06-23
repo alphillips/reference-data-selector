@@ -7,7 +7,7 @@ module.exports = {
   webpack: {
     define: {
       'process.env':{
-        'API_HOST': JSON.stringify('https://next-doc.now.sh')
+        'API_HOST': JSON.stringify('http://localhost:3000/nexdoc-external-ui')
       }
     }
   }
