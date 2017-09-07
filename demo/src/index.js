@@ -3,6 +3,8 @@ import {render} from 'react-dom'
 
 import Component from '../../src'
 
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+
 class Demo extends React.Component {
 
   constructor(props) {
@@ -21,6 +23,7 @@ class Demo extends React.Component {
 
   render() {
     return (
+      <MuiThemeProvider>
       <div>
         <h1>reference-data-selector Demo</h1>
         <Component
@@ -32,6 +35,7 @@ class Demo extends React.Component {
           value={this.state.value}
         />
       </div>
+      </MuiThemeProvider>
     )
   }
 }
