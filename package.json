@@ -1,6 +1,6 @@
 {
   "name": "@react-ag-components/reference-data-selector",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "reference-data-selector React component",
   "main": "lib/index.js",
   "module": "es/index.js",
