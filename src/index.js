@@ -243,7 +243,7 @@ class RefDataSelector extends React.Component {
             searchText={this.state.inputText}
             menuStyle = {{maxHeight:"600px",overflowY:'auto'}}
             onKeyUp={this.onTextChange}
-            maxSearchResults={1000}
+            maxSearchResults={100}
           />
 
           {/*
