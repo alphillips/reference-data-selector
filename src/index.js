@@ -216,7 +216,9 @@ class RefDataSelector extends React.Component {
 
     const style = {
       'width': '100%',
-      'color':'#999'
+      fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif',
+      'color':'#313131',
+
     }
 
     const containerStyle = {
