@@ -162,7 +162,6 @@ class RefDataSelector extends React.Component {
   }
 
   onChangeOld = (val) => {
-    console.log(val)
     var value = val ? val.value : null
     if (this.props.onChange) {
       this.props.onChange(value)
@@ -175,18 +174,16 @@ class RefDataSelector extends React.Component {
       if (this.props.onChange) {
         this.props.onChange(code.value)
       }
-      // this.setState({
-      //   text: val
-      // })
+    } else {
+      if(val.trim().length === 0){
+        if (this.props.onChange) {
+          this.props.onChange('')
+        }
+      }
     }
-    // var value = val
-    // if (this.props.onChange) {
-    //   this.props.onChange(value)
-    // }
   }
 
   onNewRequest = (val) => {
-    console.log(val)
     var value = val.value
     if (this.props.onChange) {
       this.props.onChange(value)
