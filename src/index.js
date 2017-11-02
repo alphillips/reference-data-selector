@@ -124,6 +124,24 @@ class RefDataSelector extends React.Component {
           }
           return
       }
+
+      // if(this.cache){
+      //   let data = this.cache
+      //   this.setState({
+      //     options: data
+      //   })
+      //
+      //   if(textValue){
+      //     let text = data.find((item) =>  item.value.toLowerCase() === textValue.toLowerCase())
+      //     if(text.label){
+      //       this.setState({
+      //         inputText: text.label
+      //       })
+      //     }
+      //   }
+      //   return
+      // }
+
     }
 
     let urlPrefix = this.host + '/api/refdata/'
@@ -141,8 +159,10 @@ class RefDataSelector extends React.Component {
             //     inputText: parsedData[0].label
             //   })
             // }
-            if(this.state.text){
-              let text = parsedData.find((item) =>  item.value.toLowerCase() === this.state.text.toLowerCase())
+
+            if(textValue){
+              let text = parsedData.find((item) =>  item.value.toLowerCase() === textValue.toLowerCase())
+
               if(text.label){
                 this.setState({
                   inputText: text.label
