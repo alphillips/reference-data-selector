@@ -235,7 +235,12 @@ class RefDataSelector extends React.Component {
       'width': '100%',
       fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif',
       'color':'#313131',
+    }
 
+    const labelStyle = {
+      'width': '100%',
+      fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif',
+      'color':'#999',
     }
 
     const containerStyle = {
@@ -257,7 +262,7 @@ class RefDataSelector extends React.Component {
             onNewRequest={this.onNewRequest}
             style={style}
             textFieldStyle={style}
-            floatingLabelStyle={style}
+            floatingLabelStyle={labelStyle}
             fullWidth={true}
             searchText={this.state.inputText}
             menuStyle = {{maxHeight:"600px",overflowY:'auto'}}
