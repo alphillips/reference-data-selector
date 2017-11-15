@@ -15,19 +15,25 @@ class Demo extends React.Component {
       }
   }
 
+  componentDidMount() {
+    this.loadCountrySelector.refs.loadCountrySelector.focus()
+    console.log(this.loadCountrySelector.refs.loadCountrySelector)
+  }
+
   onChange = (val) => {
     this.setState((prevState, props) => ({
       value: val
     }))
   }
-
+  //ref={(input) => { this.loadCountrySelector = input; }}
   render() {
     return (
       <MuiThemeProvider>
       <div>
         <h1>reference-data-selector Demo</h1>
         <Component
-          id="load-country-selector"
+          id="loadCountrySelector"
+          ref={(input) => { this.loadCountrySelector = input }}
           label="Country"
           placeholder="Select country"
           type="country"

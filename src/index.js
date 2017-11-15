@@ -222,7 +222,7 @@ class RefDataSelector extends React.Component {
   }
 
   render() {
-    const { id, label, value, error, placeholder } = this.props;
+    const { id, label, value, error, placeholder, ref } = this.props;
 
     const errorClass = error ? 'hasError' : '';
 
@@ -253,6 +253,8 @@ class RefDataSelector extends React.Component {
 
 
         <AutoComplete
+            id={id}
+            ref={id}
             floatingLabelText={label}
             openOnFocus={true}
             dataSource={this.state.options}
