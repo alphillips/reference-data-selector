@@ -36,9 +36,10 @@ class Demo extends React.Component {
           ref={(input) => { this.loadCountrySelector = input }}
           label="Country"
           placeholder="Select country"
-          type="country"
+          type="daff.common.country"
           onChange={this.onChange}
           value={this.state.value}
+          url="/RefDataRest/resources/v2/ref-data/data-set/"
         />
       </div>
       </MuiThemeProvider>

@@ -7,7 +7,7 @@ module.exports = {
   webpack: {
     define: {
       'process.env':{
-        'API_HOST': JSON.stringify('http://localhost:3000/nexdoc-external-ui')
+        'API_HOST': JSON.stringify('http://act001appd0001.devagdaff.gov.au:9001/nexdoc')
       }
     }
   }

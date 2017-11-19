@@ -1,10 +1,6 @@
 import React from 'react';
 
-// import Select from 'react-select'
-
 import AutoComplete from 'material-ui/AutoComplete'
-
-// import 'react-select/dist/react-select.css'
 // import './ref-data-selector.css'
 
 class RefDataSelector extends React.Component {
@@ -21,6 +17,11 @@ class RefDataSelector extends React.Component {
       maxWidth: props.maxWidth || "100%"
     }
     this.host = process.env.API_HOST || ''
+    if(props.url) {
+        this.urlPrefix = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '') + props.url
+    } else {
+      this.urlPrefix = this.host + '/api/refdata/'
+    }
   }
 
 
@@ -56,8 +57,7 @@ class RefDataSelector extends React.Component {
       }
     }
 
-    let urlPrefix = this.host + '/api/refdata/'
-    fetch(urlPrefix + this.props.type, { credentials: 'same-origin' }).then(
+    fetch(this.urlPrefix + this.props.type, { credentials: 'same-origin' }).then(
       response => {
         if (response.status === 200) {
           response.text().then(data => {
@@ -108,12 +108,7 @@ class RefDataSelector extends React.Component {
           this.setState({
             options: data
           })
-          // if(data.length === 1){
-          //   // this.onChange(data[0].value, data)
-          //   this.setState({
-          //     inputText: data[0].label
-          //   })
-          // }
+
           if(textValue){
             let text = data.find((item) =>  item.value.toLowerCase() === textValue.toLowerCase())
             if(text.label){
@@ -125,27 +120,9 @@ class RefDataSelector extends React.Component {
           return
       }
 
-      // if(this.cache){
-      //   let data = this.cache
-      //   this.setState({
-      //     options: data
-      //   })
-      //
-      //   if(textValue){
-      //     let text = data.find((item) =>  item.value.toLowerCase() === textValue.toLowerCase())
-      //     if(text.label){
-      //       this.setState({
-      //         inputText: text.label
-      //       })
-      //     }
-      //   }
-      //   return
-      // }
-
     }
 
-    let urlPrefix = this.host + '/api/refdata/'
-    fetch(urlPrefix + this.props.type, { credentials: 'same-origin' }).then(
+    fetch(this.urlPrefix + this.props.type, { credentials: 'same-origin' }).then(
       response => {
         if (response.status === 200) {
           response.text().then(data => {
@@ -153,12 +130,6 @@ class RefDataSelector extends React.Component {
             this.setState({
               options: parsedData
             })
-            // if(parsedData.length === 1){
-            //   // this.onChange(parsedData[0].value, parsedData)
-            //   this.setState({
-            //     inputText: parsedData[0].label
-            //   })
-            // }
 
             if(textValue){
               let text = parsedData.find((item) =>  item.value.toLowerCase() === textValue.toLowerCase())
@@ -216,9 +187,6 @@ class RefDataSelector extends React.Component {
   onTextChange = (event) => {
     let value = event.target.value
     this.onChange(value, this.state.options)
-    // if (this.props.onTextChange) {
-    //   this.props.onTextChange(value)
-    // }
   }
 
   render() {
