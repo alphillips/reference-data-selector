@@ -163,7 +163,7 @@ class RefDataSelector extends React.Component {
     let code = src.find((item) =>  item.label.toLowerCase() === val.toLowerCase())
     if(code){
       if (this.props.onChange) {
-        this.props.onChange(code.value)
+        this.props.onChange(code.value, src)
       }
     } else {
       if(val.trim().length === 0){
