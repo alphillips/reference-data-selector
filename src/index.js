@@ -47,7 +47,7 @@ class RefDataSelector extends React.Component {
           }
           if(this.state.text){
             let text = data.find((item) =>  item.value.toLowerCase() === this.state.text.toLowerCase())
-            if(text.label){
+            if(text && text.label){
               this.setState({
                 inputText: text.label
               })
@@ -78,7 +78,7 @@ class RefDataSelector extends React.Component {
             }
             if(this.state.text){
               let text = parsedData.find((item) =>  item.value.toLowerCase() === this.state.text.toLowerCase())
-              if(text.label){
+              if(text && text.label){
                 this.setState({
                   inputText: text.label
                 })
@@ -111,7 +111,7 @@ class RefDataSelector extends React.Component {
 
           if(textValue){
             let text = data.find((item) =>  item.value.toLowerCase() === textValue.toLowerCase())
-            if(text.label){
+            if(text && text.label){
               this.setState({
                 inputText: text.label
               })
@@ -134,7 +134,7 @@ class RefDataSelector extends React.Component {
             if(textValue){
               let text = parsedData.find((item) =>  item.value.toLowerCase() === textValue.toLowerCase())
 
-              if(text.label){
+              if(text && text.label){
                 this.setState({
                   inputText: text.label
                 })
