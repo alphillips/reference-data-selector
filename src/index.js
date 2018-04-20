@@ -1,260 +1,275 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import Autosuggest from 'react-autosuggest';
+import match from 'autosuggest-highlight/match';
+import parse from 'autosuggest-highlight/parse';
+import TextField from 'material-ui/TextField';
+import Paper from 'material-ui/Paper';
+import { MenuItem } from 'material-ui/Menu';
+import { withStyles } from 'material-ui/styles';
 
-import AutoComplete from 'material-ui/AutoComplete'
-// import './ref-data-selector.css'
+// let suggestions = [{ "label": "Afghanistan", "value": "AF" }, { "label": "Åland Islands", "value": "AX" }, { "label": "Albania", "value": "AL" }, { "label": "Algeria", "value": "DZ" }, { "label": "American Samoa", "value": "AS" }, { "label": "Andorra", "value": "AD" }, { "label": "Angola", "value": "AO" }, { "label": "Anguilla", "value": "AI" }, { "label": "Antarctica", "value": "AQ" },
+// { "label": "Antigua and Barbuda", "value": "AG" }]
 
-class RefDataSelector extends React.Component {
+if(!window.referenceDataSelectorCache){
+  window.referenceDataSelectorCache = []
+}
+
+function renderInput(inputProps) {
+  const { classes, ref, ...other } = inputProps;
+
+  return (
+    <TextField
+      fullWidth
+      InputProps={{
+        inputRef: ref,
+        classes: {
+          input: classes.input,
+        },
+        ...other,
+      }}
+    />
+  );
+}
+
+
+function renderSuggestionsContainer(options) {
+  const { containerProps, children } = options;
+
+  return (
+    <Paper {...containerProps} square>
+      {children}
+    </Paper>
+  );
+}
+
+
+
+const styles = theme => ({
+  container: {
+    flexGrow: 1,
+    position: 'relative'
+  },
+  suggestionsContainerOpen: {
+    position: 'absolute',
+    zIndex: 1,
+    marginTop: theme.spacing.unit,
+    left: 0,
+    right: 0,
+  },
+  suggestion: {
+    display: 'block',
+  },
+  suggestionsList: {
+    margin: 0,
+    padding: 0,
+    listStyleType: 'none',
+  },
+});
+
+class IntegrationAutosuggest extends React.Component {
+
+  state = {
+    value: '',
+    suggestions: [],
+  };
 
   constructor(props) {
-    super(props)
-    this.state = {
-      options: [],
-      text:props.value,
-      inputText:'',
-      display:true
-    }
-    this.linkStyle = {
-      maxWidth: props.maxWidth || "100%"
-    }
-    this.host = process.env.API_HOST || ''
-    if(props.url) {
-        this.urlPrefix = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '') + props.url
-    } else {
-      this.urlPrefix = this.host + '/api/refdata/'
-    }
+      super(props)
+
+      this.loadSuggestions(props.type)
+
+      this.suggestions = []
   }
 
-
-  componentDidMount() {
-
-    if(!this.props.noCache){
-      if(window.refDataSelectorCache &&
-         window.refDataSelectorCache[this.props.type]){
-          let data = window.refDataSelectorCache[this.props.type]
-          this.setState({
-            options: data
-          })
-          if(data.length === 1){
-            this.onChange(data[0].label, data)
-            this.setState({
-              inputText: data[0].label
-            })
-          }
-          if(data.length === 0){
-            this.setState({
-              display: false
-            })
-          }
-          if(this.state.text){
-            let text = data.find((item) =>  item.value.toLowerCase() === this.state.text.toLowerCase())
-            if(text && text.label){
-              this.setState({
-                inputText: text.label
-              })
-            }
-          }
-          return
-      }
-    }
-
-    fetch(this.urlPrefix + this.props.type, { credentials: 'same-origin' }).then(
-      response => {
-        if (response.status === 200) {
-          response.text().then(data => {
-            let parsedData = JSON.parse(data)
-            this.setState({
-              options: parsedData
-            })
-            if(parsedData.length === 1){
-              this.onChange(parsedData[0].label, parsedData)
-              this.setState({
-                inputText: parsedData[0].label
-              })
-            }
-            if(parsedData.length === 0){
-              this.setState({
-                display: false
-              })
-            }
-            if(this.state.text){
-              let text = parsedData.find((item) =>  item.value.toLowerCase() === this.state.text.toLowerCase())
-              if(text && text.label){
-                this.setState({
-                  inputText: text.label
-                })
-              }
-            }
-            if(!this.props.noCache){
-              if(!window.refDataSelectorCache){
-                window.refDataSelectorCache = []
-              }
-              window.refDataSelectorCache[this.props.type] = JSON.parse(data)
-            }
-          });
-        }
-      }
-    )
-  }
-
-
-  componentWillReceiveProps(nextProps) {
-
-    let textValue = nextProps.value
-
-    if(!this.props.noCache){
-      if(window.refDataSelectorCache &&
-         window.refDataSelectorCache[this.props.type]){
-          let data = window.refDataSelectorCache[this.props.type]
-          this.setState({
-            options: data
-          })
-
-          if(textValue){
-            let text = data.find((item) =>  item.value.toLowerCase() === textValue.toLowerCase())
-            if(text && text.label){
-              this.setState({
-                inputText: text.label
-              })
-            }
-          }
-          return
-      }
-
-    }
-
-    fetch(this.urlPrefix + this.props.type, { credentials: 'same-origin' }).then(
-      response => {
-        if (response.status === 200) {
-          response.text().then(data => {
-            let parsedData = JSON.parse(data)
-            this.setState({
-              options: parsedData
-            })
-
-            if(textValue){
-              let text = parsedData.find((item) =>  item.value.toLowerCase() === textValue.toLowerCase())
-
-              if(text && text.label){
-                this.setState({
-                  inputText: text.label
-                })
-              }
-            }
-            if(!this.props.noCache){
-              if(!window.refDataSelectorCache){
-                window.refDataSelectorCache = []
-              }
-              window.refDataSelectorCache[this.props.type] = JSON.parse(data)
-            }
-          });
-        }
-      }
-    )
-  }
-
-  onChangeOld = (val) => {
-    var value = val ? val.value : null
-    if (this.props.onChange) {
-      this.props.onChange(value)
-    }
-  }
-
-  onChange = (val, src) => {
-    let code = src.find((item) =>  item.label.toLowerCase() === val.toLowerCase())
-    if(code){
-      if (this.props.onChange) {
-        this.props.onChange(code.value, src)
-      }
-    } else {
-      if(val.trim().length === 0){
-        if (this.props.onChange) {
-          this.props.onChange('')
-        }
-      }
-    }
-  }
-
-  onNewRequest = (val) => {
-    var value = val.value
-    if (this.props.onChange) {
-      this.props.onChange(value)
-    }
+  handleSuggestionsFetchRequested = ({ value }) => {
     this.setState({
-      inputText: val.label
-    })
+      suggestions: this.getSuggestions(value, this.props.showOnEmpty),
+    });
+
+
+  };
+
+  handleSuggestionsClearRequested = () => {
+    this.setState({suggestions: []});
+  };
+
+  handleChange = (event, { newValue }) => {
+    this.setState({
+      value: newValue,
+    });
+  };
+
+  handleSuggestionSelected = (suggestion, suggestionValue, suggestionIndex, sectionIndex) => {
+    if(suggestionValue && suggestionValue.suggestion && suggestionValue.suggestion.value){
+      if(this.props.onChange){
+        this.props.onChange(suggestionValue.suggestion.value)
+      }
+      this.setState({suggestions: []});
+    }
   }
 
-  onTextChange = (event) => {
-    let value = event.target.value
-    this.onChange(value, this.state.options)
+  loadSuggestions = (type) => {
+
+    if(window.referenceDataSelectorCache[type]){
+      this.setSuggestions(window.referenceDataSelectorCache[type])
+      this.updateValue()
+      return
+    }
+
+    const host = process.env.REACT_APP_API_HOST || ''
+    let urlPrefix = ''
+    if(this.props.url) {
+        urlPrefix = window.location.protocol+'//'+window.location.hostname+(window.location.port ? ':'+window.location.port: '') + this.props.url
+    } else {
+      urlPrefix = host + '/api/refdata/'
+    }
+
+    fetch(urlPrefix + type, { credentials: 'same-origin' }).then(
+      response => {
+        if (response.status === 200) {
+          response.text().then(data => {
+            const parsedData = JSON.parse(data)
+            window.referenceDataSelectorCache[type] = parsedData
+            this.setSuggestions(parsedData)
+            this.updateValue()
+            //this.setState({suggestions: parsedData});
+          });
+        }
+      }
+    )
+
+  }
+
+  updateValue = () => {
+    if(this.props.value){
+      let defaultVal = this.suggestions.find((item) =>  item.value.toLowerCase() === this.props.value.toLowerCase())
+      this.setState({value: defaultVal.label});
+    }
+
+  }
+
+  shouldRenderSuggestions = (value) => {
+    return true
+  }
+
+  componentDidReceiveProps(nextProps) {
+    console.log(nextProps)
+  }
+
+  getSuggestionValue = (suggestion) => {
+    return suggestion.label;
+  }
+
+  setSuggestions = (_suggestions) => {
+    this.suggestions = _suggestions
+
+    if(this.suggestions.length === 0){
+      this.setState({hide: true});
+    }
+
+    if(this.suggestions.length === 1){
+
+    }
+
+  }
+
+  getSuggestions = (value, showOnEmpty) => {
+
+    const inputValue = value.trim().toLowerCase();
+    const inputLength = inputValue.length;
+    let count = 0;
+
+    if(inputLength === 0){
+      if(this.props.onChange){
+        this.props.onChange('')
+      }
+    }
+
+    if(inputLength === 0 && showOnEmpty) {
+      return this.suggestions
+    }
+
+    return inputLength === 0
+      ? []
+      : this.suggestions.filter(suggestion => {
+          const keep =
+            count < 5 && suggestion.label.toLowerCase().slice(0, inputLength) === inputValue;
+
+          if (keep) {
+            count += 1;
+          }
+
+          return keep;
+        });
+  }
+
+  renderSuggestion = (suggestion, { query, isHighlighted }) => {
+    const matches = match(suggestion.label, query);
+    const parts = parse(suggestion.label, matches);
+
+    let extra = ''
+
+    if(this.props.showValueInLabel){
+      extra = ' (' + suggestion.value +')'
+    }
+    console.log(suggestion)
+    return (
+      <MenuItem selected={isHighlighted} component="div">
+        <div>
+          {parts.map((part, index) => {
+            return part.highlight ? (
+              <span key={String(index)} style={{ fontWeight: 300 }}>
+                {part.text}
+              </span>
+            ) : (
+              <strong key={String(index)} style={{ fontWeight: 500 }}>
+                {part.text}
+              </strong>
+            );
+          })}
+          {extra}
+        </div>
+      </MenuItem>
+    );
   }
 
   render() {
-    const { id, label, value, error, placeholder, ref } = this.props;
-
-    const errorClass = error ? 'hasError' : '';
-
-    const dataSourceConfig = {
-      text: 'label',
-      value: 'value',
-    }
-
-    const style = {
-      'width': '100%',
-      fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif',
-      'color':'#313131',
-    }
-
-    const labelStyle = {
-      'width': '100%',
-      fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif',
-      'color':'#999',
-    }
-
-    const containerStyle = {
-      display:(this.state.display ? 'block' : 'none'),
-      maxWidth: this.props.maxWidth || "100%"
-    }
+    const { classes } = this.props;
 
     return (
-      <div className={"text-group ref-data-selector " + errorClass} style={containerStyle}>
-
-
-        <AutoComplete
-            id={id}
-            ref={id}
-            floatingLabelText={label}
-            openOnFocus={true}
-            dataSource={this.state.options}
-            onUpdateInput={this.onChange}
-            dataSourceConfig={dataSourceConfig}
-            filter={AutoComplete.caseInsensitiveFilter}
-            onNewRequest={this.onNewRequest}
-            style={style}
-            textFieldStyle={style}
-            floatingLabelStyle={labelStyle}
-            fullWidth={true}
-            searchText={this.state.inputText}
-            menuStyle = {{maxHeight:"600px",overflowY:'auto'}}
-            onKeyUp={this.onTextChange}
-            maxSearchResults={100}
-          />
-
-          {/*
-          <label htmlFor={id}>{label}</label>
-          <Select
-            name="form-field-name"
-            options={this.state.options}
-            onChange={this.onChange}
-            value={value}
-            placeholder={placeholder}
-            inputProps={{ id: id, className: 'hideError' }}
-          />
-          <span role="alert" aria-live="polite" className={errorClass}>{error}</span>
-          */}
+      <div style={this.state.hide && {display:'none'}}>
+        <Autosuggest
+          id={this.props.id}
+          theme={{
+            container: classes.container,
+            suggestionsContainerOpen: classes.suggestionsContainerOpen,
+            suggestionsList: classes.suggestionsList,
+            suggestion: classes.suggestion,
+          }}
+          renderInputComponent={renderInput}
+          suggestions={this.state.suggestions}
+          onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
+          onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
+          renderSuggestionsContainer={renderSuggestionsContainer}
+          getSuggestionValue={this.getSuggestionValue}
+          renderSuggestion={this.renderSuggestion}
+          onSuggestionSelected={this.handleSuggestionSelected}
+          shouldRenderSuggestions={this.shouldRenderSuggestions}
+          inputProps={{
+            classes,
+            placeholder: this.props.label,
+            value: this.state.value,
+            onChange: this.handleChange
+          }}
+        />
       </div>
-    )
+    );
   }
 }
 
-export default RefDataSelector
+IntegrationAutosuggest.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(IntegrationAutosuggest);
