@@ -14,6 +14,13 @@ import { withStyles } from 'material-ui/styles';
 if(!window.referenceDataSelectorCache){
   window.referenceDataSelectorCache = []
 }
+// let weightUnitOptions = [
+//   { "value": "kg", "label": "kilogram" },
+//   { "value": "g", "label": "gram" },
+//   { "value": "mg", "label": "milligram" },
+//   { "value": "t", "label": "tonne" }
+// ]
+// window.referenceDataSelectorCache['unit'] = weightUnitOptions
 
 function renderInput(inputProps) {
   const { classes, ref, ...other } = inputProps;
@@ -48,7 +55,8 @@ function renderSuggestionsContainer(options) {
 const styles = theme => ({
   container: {
     flexGrow: 1,
-    position: 'relative'
+    position: 'relative',
+    marginTop: '32px'
   },
   suggestionsContainerOpen: {
     position: 'absolute',
@@ -77,14 +85,18 @@ class IntegrationAutosuggest extends React.Component {
   constructor(props) {
       super(props)
 
-      this.loadSuggestions(props.type)
+
 
       this.suggestions = []
   }
 
+  componentDidMount() {
+    this.loadSuggestions(this.props.type)
+  }
+
   handleSuggestionsFetchRequested = ({ value }) => {
     this.setState({
-      suggestions: this.getSuggestions(value, this.props.showOnEmpty),
+      suggestions: this.getSuggestions(value, this.props.dontShowOnEmpty),
     });
 
 
@@ -103,7 +115,7 @@ class IntegrationAutosuggest extends React.Component {
   handleSuggestionSelected = (suggestion, suggestionValue, suggestionIndex, sectionIndex) => {
     if(suggestionValue && suggestionValue.suggestion && suggestionValue.suggestion.value){
       if(this.props.onChange){
-        this.props.onChange(suggestionValue.suggestion.value)
+        this.props.onChange(suggestionValue.suggestion.value, this.suggestions)
       }
       this.setState({suggestions: []});
     }
@@ -153,10 +165,6 @@ class IntegrationAutosuggest extends React.Component {
     return true
   }
 
-  componentDidReceiveProps(nextProps) {
-    console.log(nextProps)
-  }
-
   getSuggestionValue = (suggestion) => {
     return suggestion.label;
   }
@@ -174,7 +182,7 @@ class IntegrationAutosuggest extends React.Component {
 
   }
 
-  getSuggestions = (value, showOnEmpty) => {
+  getSuggestions = (value, dontShowOnEmpty) => {
 
     const inputValue = value.trim().toLowerCase();
     const inputLength = inputValue.length;
@@ -186,7 +194,7 @@ class IntegrationAutosuggest extends React.Component {
       }
     }
 
-    if(inputLength === 0 && showOnEmpty) {
+    if(inputLength === 0 && !dontShowOnEmpty) {
       return this.suggestions
     }
 
@@ -213,7 +221,7 @@ class IntegrationAutosuggest extends React.Component {
     if(this.props.showValueInLabel){
       extra = ' (' + suggestion.value +')'
     }
-    console.log(suggestion)
+
     return (
       <MenuItem selected={isHighlighted} component="div">
         <div>
@@ -260,7 +268,9 @@ class IntegrationAutosuggest extends React.Component {
             classes,
             placeholder: this.props.label,
             value: this.state.value,
-            onChange: this.handleChange
+            onChange: this.handleChange,
+            autoFocus:this.props.autoFocus || false,
+            inputRef:this.props.inputRef
           }}
         />
       </div>

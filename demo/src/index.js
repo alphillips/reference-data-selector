@@ -46,7 +46,7 @@ class Demo extends React.Component {
         <IntegrationAutosuggest
           type="country"
           onChange={this.onChange('country1')}
-          showOnEmpty={true}
+          dontShowOnEmpty={true}
           label="Select country"
           value={this.state.country1}
         />
