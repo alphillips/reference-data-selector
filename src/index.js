@@ -116,6 +116,8 @@ class RefDataSelector extends React.Component {
                 inputText: text.label
               })
             }
+          } else {
+            this.setState({inputText: ''})
           }
           return
       }
