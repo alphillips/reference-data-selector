@@ -1,6 +1,6 @@
 import React from 'react';
 
-import AutoComplete from 'material-ui/AutoComplete'
+import AutoComplete from './AutoComplete/AutoComplete'
 // import './ref-data-selector.css'
 
 class RefDataSelector extends React.Component {
