@@ -2,6 +2,7 @@ import React from 'react';
 
 import AutoComplete from './AutoComplete/AutoComplete'
 // import './ref-data-selector.css'
+import Help from '@react-ag-components/help'
 
 class RefDataSelector extends React.Component {
 
@@ -218,8 +219,28 @@ class RefDataSelector extends React.Component {
       maxWidth: this.props.maxWidth || "100%"
     }
 
+    let inputContainerStyle = {}
+    let helpContainerStyle = {
+      display:'none'
+    }
+    let className= ''
+
+    if(this.props.helpText){
+      className = 'input-with-help'
+      inputContainerStyle = {
+        width: '90%'
+      }
+
+      helpContainerStyle = {
+        marginTop: '40px'
+      }
+
+    }
+
+    const autoCompleteStyle = {...style, ...inputContainerStyle}
+
     return (
-      <div className={"text-group ref-data-selector " + errorClass} style={containerStyle}>
+      <div className={"text-group ref-data-selector " + errorClass + ' ' + className} style={containerStyle}>
 
 
         <AutoComplete
@@ -232,7 +253,7 @@ class RefDataSelector extends React.Component {
             dataSourceConfig={dataSourceConfig}
             filter={AutoComplete.caseInsensitiveFilter}
             onNewRequest={this.onNewRequest}
-            style={style}
+            style={autoCompleteStyle}
             textFieldStyle={style}
             floatingLabelStyle={labelStyle}
             fullWidth={true}
@@ -240,20 +261,15 @@ class RefDataSelector extends React.Component {
             menuStyle = {{maxHeight:"600px",overflowY:'auto'}}
             onKeyUp={this.onTextChange}
             maxSearchResults={100}
+            title={this.props.title || ''}
           />
 
-          {/*
-          <label htmlFor={id}>{label}</label>
-          <Select
-            name="form-field-name"
-            options={this.state.options}
-            onChange={this.onChange}
-            value={value}
-            placeholder={placeholder}
-            inputProps={{ id: id, className: 'hideError' }}
-          />
-          <span role="alert" aria-live="polite" className={errorClass}>{error}</span>
-          */}
+          {this.props.helpText &&
+            <Help
+              text={this.props.helpText}
+              style={helpContainerStyle}
+            />
+          }
       </div>
     )
   }

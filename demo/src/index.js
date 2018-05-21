@@ -40,6 +40,7 @@ class Demo extends React.Component {
           onChange={this.onChange}
           value={this.state.value}
           url="/RefDataRest/resources/v2/ref-data/data-set/"
+          helpText="This is some help for the ref data field"
         />
       </div>
       </MuiThemeProvider>
