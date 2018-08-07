@@ -45,6 +45,9 @@ class RefDataSelector extends React.Component {
             this.setState({
               display: false
             })
+            if (this.props.onChange) {
+              this.props.onChange('')
+            }
           }
           if(this.state.text){
             let text = data.find((item) =>  item.value.toLowerCase() === this.state.text.toLowerCase())
@@ -76,6 +79,9 @@ class RefDataSelector extends React.Component {
               this.setState({
                 display: false
               })
+              if (this.props.onChange) {
+                this.props.onChange('')
+              }
             }
             if(this.state.text){
               let text = parsedData.find((item) =>  item.value.toLowerCase() === this.state.text.toLowerCase())
