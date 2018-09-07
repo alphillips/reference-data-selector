@@ -148,10 +148,10 @@ class RefDataSelector extends React.Component {
                   inputText: text.label
                 })
               }
-            }else {
+            } else {
               this.setState({inputText: ''})
             }
-            
+
             if(!this.props.noCache){
               if(!window.refDataSelectorCache){
                 window.refDataSelectorCache = []
