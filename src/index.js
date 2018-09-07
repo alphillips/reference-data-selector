@@ -1,6 +1,6 @@
 import React from 'react';
 
-import AutoComplete from './AutoComplete/AutoComplete'
+import AutoComplete from 'material-ui/AutoComplete'
 // import './ref-data-selector.css'
 import Help from '@react-ag-components/help'
 
@@ -148,7 +148,10 @@ class RefDataSelector extends React.Component {
                   inputText: text.label
                 })
               }
+            } else {
+              this.setState({inputText: ''})
             }
+
             if(!this.props.noCache){
               if(!window.refDataSelectorCache){
                 window.refDataSelectorCache = []
