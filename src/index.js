@@ -27,43 +27,141 @@ class RefDataSelector extends React.Component {
 
 
   componentDidMount() {
-    this.refreshData()
-  }
 
-  refreshData = () => {
-    let options = null
-    if(this.props.noCache) {
+    if(!this.props.noCache){
       if(window.refDataSelectorCache &&
          window.refDataSelectorCache[this.props.type]){
-           options=window.refDataSelectorCache[this.props.type]
-       } else {
-         options = this.fetchData()
-           window.refDataSelectorCache[this.props.type] = options
-       }
-    } else {
-      options = this.fetchData()
-    }
-    this.setState({options})
-  }
-
-fetchData = () => {
-  let options = null
-  fetch(this.urlPrefix + this.props.type, { credentials: 'same-origin' }).then(
-    response => {
-      if (response.status === 200) {
-        response.text().then(data => {
-          options = JSON.parse(data)
+          let data = window.refDataSelectorCache[this.props.type]
           this.setState({
-            options
+            options: data
           })
+          if(data.length === 1){
+            this.onChange(data[0].label, data)
+            this.setState({
+              inputText: data[0].label
+            })
+          }
+          if(data.length === 0){
+            this.setState({
+              display: false
+            })
+            if (this.props.onChange) {
+              this.props.onChange('')
+            }
+          }
+          if(this.state.text){
+            let text = data.find((item) =>  item.value.toLowerCase() === this.state.text.toLowerCase())
+            if(text && text.label){
+              this.setState({
+                inputText: text.label
+              })
+            }
+          }
+          return
+      }
+    }
+
+    fetch(this.urlPrefix + this.props.type, { credentials: 'same-origin' }).then(
+      response => {
+        if (response.status === 200) {
+          response.text().then(data => {
+            let parsedData = JSON.parse(data)
+            this.setState({
+              options: parsedData
+            })
+            if(parsedData.length === 1){
+              this.onChange(parsedData[0].label, parsedData)
+              this.setState({
+                inputText: parsedData[0].label
+              })
+            }
+            if(parsedData.length === 0){
+              this.setState({
+                display: false
+              })
+              if (this.props.onChange) {
+                this.props.onChange('')
+              }
+            }
+            if(this.state.text){
+              let text = parsedData.find((item) =>  item.value.toLowerCase() === this.state.text.toLowerCase())
+              if(text && text.label){
+                this.setState({
+                  inputText: text.label
+                })
+              }
+            }
+            if(!this.props.noCache){
+              if(!window.refDataSelectorCache){
+                window.refDataSelectorCache = []
+              }
+              window.refDataSelectorCache[this.props.type] = JSON.parse(data)
+            }
+          });
         }
       }
-    })
-    return options
-}
+    )
+  }
+
 
   componentWillReceiveProps(nextProps) {
-    this.refreshData()
+
+    let textValue = nextProps.value
+
+    if(!this.props.noCache){
+      if(window.refDataSelectorCache &&
+         window.refDataSelectorCache[this.props.type]){
+          let data = window.refDataSelectorCache[this.props.type]
+          this.setState({
+            options: data
+          })
+
+          if(textValue){
+            let text = data.find((item) =>  item.value.toLowerCase() === textValue.toLowerCase())
+            if(text && text.label){
+              this.setState({
+                inputText: text.label
+              })
+            }
+          } else {
+            this.setState({inputText: ''})
+          }
+          return
+      }
+
+    }
+
+    fetch(this.urlPrefix + this.props.type, { credentials: 'same-origin' }).then(
+      response => {
+        if (response.status === 200) {
+          response.text().then(data => {
+            let parsedData = JSON.parse(data)
+            this.setState({
+              options: parsedData
+            })
+
+            if(textValue){
+              let text = parsedData.find((item) =>  item.value.toLowerCase() === textValue.toLowerCase())
+
+              if(text && text.label){
+                this.setState({
+                  inputText: text.label
+                })
+              }
+            } else {
+              this.setState({inputText: ''})
+            }
+
+            if(!this.props.noCache){
+              if(!window.refDataSelectorCache){
+                window.refDataSelectorCache = []
+              }
+              window.refDataSelectorCache[this.props.type] = JSON.parse(data)
+            }
+          });
+        }
+      }
+    )
   }
 
   onChangeOld = (val) => {
@@ -73,43 +171,18 @@ fetchData = () => {
     }
   }
 
-  onChange = (inputText, options) => {
-    let code = options.find((item) =>  item.label.toLowerCase() === inputText.toLowerCase())
+  onChange = (val, src) => {
+    let code = src.find((item) =>  item.label.toLowerCase() === val.toLowerCase())
     if(code){
       if (this.props.onChange) {
-        this.props.onChange(code.value, options, code)
+        this.props.onChange(code.value, src, code)
       }
-      this.setState({
-        inputText: code.label
-      })
     } else {
-      if(inputText.trim().length === 0){
+      if(val.trim().length === 0){
         if (this.props.onChange) {
           this.props.onChange('')
         }
       }
-      this.setState({inputText: ''})
-    }
-
-    if(options.length === 1){
-      this.onChange(options[0].label, options)
-      this.setState({
-        inputText: options[0].label
-      })
-    }
-    if(options.length === 0){
-      this.setState({
-        display: false
-      })
-      if (this.props.onChange) {
-        this.props.onChange('')
-      }
-    }
-    let text = data.find((item) =>  item.value.toLowerCase() === inputText.toLowerCase())
-    if(text && text.label){
-      this.setState({
-        inputText: text.label
-      })
     }
   }
 
