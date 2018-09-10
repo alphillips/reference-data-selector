@@ -28,161 +28,96 @@ class RefDataSelector extends React.Component {
 
   componentDidMount() {
 
-    if(!this.props.noCache){
-      if(window.refDataSelectorCache &&
-         window.refDataSelectorCache[this.props.type]){
-          let data = window.refDataSelectorCache[this.props.type]
-          this.setState({
-            options: data
-          })
-          if(data.length === 1){
-            this.onChange(data[0].label, data)
-            this.setState({
-              inputText: data[0].label
-            })
-          }
-          if(data.length === 0){
-            this.setState({
-              display: false
-            })
-            if (this.props.onChange) {
-              this.props.onChange('')
-            }
-          }
-          if(this.state.text){
-            let text = data.find((item) =>  item.value.toLowerCase() === this.state.text.toLowerCase())
-            if(text && text.label){
-              this.setState({
-                inputText: text.label
-              })
-            }
-          }
-          return
+    let textValue = this.state.text
+
+    if(this.props.noCache) {
+      let options = this.fetchData(textValue)
+      if(options) {
+        this.setupTextLabel(options,textValue)
+      }
+    } else {
+      this.fromCacheData(textValue)
+      let options = window.refDataSelectorCache[this.props.type]
+      if(options) {
+        this.setupTextLabel(options,textValue)
       }
     }
-
-    fetch(this.urlPrefix + this.props.type, { credentials: 'same-origin' }).then(
-      response => {
-        if (response.status === 200) {
-          response.text().then(data => {
-            let parsedData = JSON.parse(data)
-            this.setState({
-              options: parsedData
-            })
-            if(parsedData.length === 1){
-              this.onChange(parsedData[0].label, parsedData)
-              this.setState({
-                inputText: parsedData[0].label
-              })
-            }
-            if(parsedData.length === 0){
-              this.setState({
-                display: false
-              })
-              if (this.props.onChange) {
-                this.props.onChange('')
-              }
-            }
-            if(this.state.text){
-              let text = parsedData.find((item) =>  item.value.toLowerCase() === this.state.text.toLowerCase())
-              if(text && text.label){
-                this.setState({
-                  inputText: text.label
-                })
-              }
-            }
-            if(!this.props.noCache){
-              if(!window.refDataSelectorCache){
-                window.refDataSelectorCache = []
-              }
-              window.refDataSelectorCache[this.props.type] = JSON.parse(data)
-            }
-          });
-        }
-      }
-    )
   }
-
-
   componentWillReceiveProps(nextProps) {
 
     let textValue = nextProps.value
 
-    if(!this.props.noCache){
-      if(window.refDataSelectorCache &&
-         window.refDataSelectorCache[this.props.type]){
-          let data = window.refDataSelectorCache[this.props.type]
-          this.setState({
-            options: data
-          })
-
-          if(textValue){
-            let text = data.find((item) =>  item.value.toLowerCase() === textValue.toLowerCase())
-            if(text && text.label){
-              this.setState({
-                inputText: text.label
-              })
-            }
-          } else {
-            this.setState({inputText: ''})
-          }
-          return
-      }
-
+    if(this.props.noCache) {
+      this.fetchData(textValue)
+    } else {
+      this.fromCacheData(textValue)
     }
+  }
 
+  fromCacheData = (textValue) => {
+    if(window.refDataSelectorCache &&
+       window.refDataSelectorCache[this.props.type]){
+        let options = window.refDataSelectorCache[this.props.type]
+        this.setState({
+          options
+        })
+    } else {
+      window.refDataSelectorCache = []
+      window.refDataSelectorCache[this.props.type] = this.fetchData(textValue)
+    }
+  }
+
+  fetchData = (textValue) => {
     fetch(this.urlPrefix + this.props.type, { credentials: 'same-origin' }).then(
       response => {
         if (response.status === 200) {
           response.text().then(data => {
-            let parsedData = JSON.parse(data)
+            let options = JSON.parse(data)
             this.setState({
-              options: parsedData
+              options
             })
-
-            if(textValue){
-              let text = parsedData.find((item) =>  item.value.toLowerCase() === textValue.toLowerCase())
-
-              if(text && text.label){
-                this.setState({
-                  inputText: text.label
-                })
-              }
-            } else {
-              this.setState({inputText: ''})
-            }
-
-            if(!this.props.noCache){
-              if(!window.refDataSelectorCache){
-                window.refDataSelectorCache = []
-              }
-              window.refDataSelectorCache[this.props.type] = JSON.parse(data)
-            }
-          });
+          })
         }
       }
     )
   }
 
-  onChangeOld = (val) => {
-    var value = val ? val.value : null
-    if (this.props.onChange) {
-      this.props.onChange(value)
-    }
-  }
-
-  onChange = (val, src) => {
-    let code = src.find((item) =>  item.label.toLowerCase() === val.toLowerCase())
-    if(code){
-      if (this.props.onChange) {
-        this.props.onChange(code.value, src, code)
+  setupTextLabel = (options, textValue) => {
+    if(options.length === 1){
+        this.onChange(options[0].label, options)
+        this.setState({
+          inputText: options[0].label
+        })
       }
-    } else {
-      if(val.trim().length === 0){
+      if(options.length === 0){
+        this.setState({
+          display: false
+        })
         if (this.props.onChange) {
           this.props.onChange('')
         }
       }
+  }
+
+  onChange = (val, src) => {
+    if(val) {
+      let text = src.find((item) =>  item.label.toLowerCase() === val.toLowerCase())
+      if(text){
+        if (this.props.onChange) {
+          this.props.onChange(text.value, src, text)
+        }
+        this.setState({
+          inputText: text.label
+        })
+      } else {
+        if(val.trim().length === 0){
+          if (this.props.onChange) {
+            this.props.onChange('')
+          }
+        }
+      }
+    } else {
+      this.setState({inputText: ''})
     }
   }
 
