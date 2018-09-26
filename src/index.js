@@ -164,13 +164,6 @@ class RefDataSelector extends React.Component {
     )
   }
 
-  onChangeOld = (val) => {
-    var value = val ? val.value : null
-    if (this.props.onChange) {
-      this.props.onChange(value)
-    }
-  }
-
   onChange = (val, src) => {
     let code = src.find((item) =>  item.label.toLowerCase() === val.toLowerCase())
     if(code){
@@ -184,6 +177,7 @@ class RefDataSelector extends React.Component {
         }
       }
     }
+    this.setState({inputText:val})
   }
 
   onNewRequest = (val) => {
@@ -196,10 +190,26 @@ class RefDataSelector extends React.Component {
     })
   }
 
-  onTextChange = (event) => {
+  onBlur = (e) => {
     let value = event.target.value
-    this.onChange(value, this.state.options)
+    this.updateLabel(value, this.state.options)
   }
+
+  updateLabel = (value, options) => {
+
+    let found = null
+
+    if(this.state.options && value) {
+      found = this.state.options.find((item) =>  item.label.toLowerCase() === value.toLowerCase())
+    }
+
+    if(!found){
+      if (this.props.onChange) {
+        this.props.onChange('')
+      }
+    }
+  }
+
 
   render() {
     const { id, label, value, error, placeholder, ref } = this.props;
@@ -268,9 +278,9 @@ class RefDataSelector extends React.Component {
             fullWidth={true}
             searchText={this.state.inputText}
             menuStyle = {{maxHeight:"600px",overflowY:'auto'}}
-            onKeyUp={this.onTextChange}
             maxSearchResults={100}
             title={this.props.title || ''}
+            onBlur={this.onBlur}
           />
 
           {this.props.helpText &&
