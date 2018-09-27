@@ -440,7 +440,7 @@ class AutoComplete extends Component {
       ...popoverOther
     } = popoverProps || {};
 
-    const {
+    let {
       open,
       anchorEl,
       searchText,
@@ -531,6 +531,10 @@ class AutoComplete extends Component {
         </Menu>
       </div>
     );
+
+    if(requestsList.length === 0) {
+      searchText = ""
+    }
 
     return (
       <div style={prepareStyles(Object.assign(styles.root, style))} >
