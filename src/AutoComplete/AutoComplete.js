@@ -532,7 +532,7 @@ class AutoComplete extends Component {
       </div>
     );
 
-    if(requestsList.length === 0) {
+    if(requestsList && requestsList.length === 0) {
       searchText = ""
     }
 
