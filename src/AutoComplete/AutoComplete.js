@@ -440,12 +440,14 @@ class AutoComplete extends Component {
       ...popoverOther
     } = popoverProps || {};
 
-    let {
+    const {
       open,
       anchorEl,
       searchText,
       focusTextField,
     } = this.state;
+
+    let displayText = this.state.searchText
 
     const {prepareStyles} = this.context.muiTheme;
     const styles = getStyles(this.props, this.context, this.state);
@@ -532,8 +534,8 @@ class AutoComplete extends Component {
       </div>
     );
 
-    if(requestsList && requestsList.length === 0) {
-      searchText = ""
+    if(this.requestsList && this.requestsList.length === 0) {
+      displayText=''
     }
 
     return (
@@ -553,7 +555,7 @@ class AutoComplete extends Component {
           {...other}
           // value and onChange are idiomatic properties often leaked.
           // We prevent their overrides in order to reduce potential bugs.
-          value={searchText}
+          value={displayText}
           onChange={this.handleChange}
         />
         <Popover
